@@ -1,6 +1,5 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 사용자 정보 관리 시스템 (교육용)
+안경잡이개발자 강의에 기반한 사용자 정보 관리 시스템
 
 ## Available Scripts
 
