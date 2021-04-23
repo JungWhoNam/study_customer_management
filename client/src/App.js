@@ -1,12 +1,14 @@
 import React from 'react';
+import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import Customer from './components/Customer';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
-import { Paper } from '@material-ui/core';
+import './App.css';
+import Customer from './components/Customer';
 
 // add CSS styles
 const styles = theme => ({
@@ -17,16 +19,32 @@ const styles = theme => ({
   },
   table: {
     minWidth: 1080
+  },
+  progress: {
+    margin: theme.spacing(2)
   }
 });
+
+// React life-cycle
+// 1) constructor
+// 2) componentWillMount()
+// 3) render()
+// 4) componentDidMount()
+// 상태변화) shouldComponentUpdate()
+// component 삭제) componentWillUnmount()
 
 class App extends React.Component {
 
   state = {
-    customers: ""
+    customers: "",
+    completed: 0 // 0~100
   };
 
   componentDidMount() {
+    // 100ms (0.1s) 마다 progress 함수가 콜
+    // 콜되는 시간이 너무 빠르면 progress bar가 이상하게 작동
+    this.timer = setInterval(this.progress, 100);
+    // fetch data from the server
     this.callApi()
       .then(res => this.setState({ customers: res }))
       .catch(err => console.log(err));
@@ -38,6 +56,16 @@ class App extends React.Component {
     return body;
   }
 
+  // state에서 completed 변수 1씩 증가... 100 이상이 되면 0으로 리셋
+  progress = () => {
+    const { completed } = this.state;
+    this.setState({ completed: completed >= 100 ? 0 : completed + 1 })
+    console.log(completed);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
 
   render() {
     // 위에서 적용한 styles를 사용하기 위해 classes 변수 선언
@@ -56,9 +84,16 @@ class App extends React.Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {this.state.customers ? this.state.customers.map(c => {
-                return <Customer key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job} />
-              }) : ""
+            {
+              this.state.customers ?
+                this.state.customers.map(c => {
+                  return <Customer key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job} />
+                }) :
+                <TableRow>
+                  <TableCell colSpan="6" align="center">
+                    <CircularProgress className={classes.progress} variant="determinate" value={this.state.completed} />
+                  </TableCell>
+                </TableRow>
             }
           </TableBody>
         </Table>
