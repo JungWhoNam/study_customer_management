@@ -1,0 +1,18 @@
+{
+    "mysql": {
+        "AWS": {
+            "host": "",
+            "user": "",
+            "password": "",
+            "port": "",
+            "database": ""
+        },
+        "local": {
+            "host": "",
+            "user": "",
+            "password": "",
+            "port": "",
+            "database": ""
+        }
+    }
+}
